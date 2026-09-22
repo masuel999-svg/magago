@@ -1,0 +1,1414 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MEGA GOAL ADVENTURE — BIG CHANGES</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #090d16 0%, #172033 50%, #090d16 100%);
+            color: #f1f5f9;
+            min-height: 100vh;
+        }
+        .glass-card {
+            background: rgba(23, 32, 51, 0.95);
+            backdrop-filter: blur(16px);
+            border: 2px solid rgba(59, 130, 246, 0.25);
+            box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.5);
+        }
+        .btn-gradient {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            transition: all 0.25s ease;
+        }
+        .btn-gradient:hover {
+            background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.6);
+        }
+        .tab-btn {
+            transition: all 0.2s ease;
+        }
+        .tab-btn.active {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            color: white;
+            border-color: #60a5fa;
+            box-shadow: 0 6px 15px rgba(37, 99, 235, 0.4);
+        }
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #090d16;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body class="selection:bg-blue-500 selection:text-white pb-12">
+
+    <div id="app" class="max-w-4xl mx-auto px-4 py-6 min-h-screen flex flex-col justify-between">
+        
+        <!-- Header / Branding -->
+        <header class="glass-card rounded-2xl p-5 mb-6 shadow-2xl flex flex-col md:flex-row justify-between items-center gap-4 border-t-4 border-blue-500">
+            <div class="flex items-center gap-4">
+                <div class="w-14 h-14 rounded-2xl bg-blue-600 flex items-center justify-center text-3xl shadow-lg shadow-blue-500/40">
+                    🎮
+                </div>
+                <div>
+                    <h1 class="text-xl md:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-300 to-sky-400">
+                        MEGA GOAL ADVENTURE — BIG CHANGES
+                    </h1>
+                    <p class="text-xs md:text-sm text-slate-300 font-bold mt-0.5">
+                        كورس المعلم الحر | إعداد د. محسن الكاشف | Online Teacher Hub
+                    </p>
+                </div>
+            </div>
+
+            <!-- Stats Bar -->
+            <div class="flex items-center gap-4 bg-slate-900/80 px-5 py-2.5 rounded-xl border border-slate-700 shadow-inner">
+                <div class="flex items-center gap-2">
+                    <span class="text-amber-400 text-xl">⭐</span>
+                    <span id="headerStars" class="font-black text-amber-300 text-lg">0</span>
+                </div>
+                <div class="h-6 w-px bg-slate-700"></div>
+                <div class="flex items-center gap-2">
+                    <span class="text-blue-400 text-xl">🏆</span>
+                    <span id="headerPoints" class="font-black text-blue-300 text-lg">0</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation Bar (Back Button & Breadcrumb) -->
+        <div id="navBarContainer" class="mb-4 hidden">
+            <button onclick="goBack()" class="flex items-center gap-2 px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-100 rounded-xl border border-slate-600 text-sm font-bold transition-all shadow-md">
+                <span>⬅</span> <span>الرجوع للخلف (Back)</span>
+            </button>
+        </div>
+
+        <!-- Main Dynamic Viewport -->
+        <main id="mainView" class="flex-grow mb-6">
+            <!-- Dynamically injected content goes here -->
+        </main>
+
+        <!-- Footer -->
+        <footer class="text-center text-xs text-slate-400 py-6 border-t border-slate-800 font-semibold">
+            جميع الحقوق محفوظة © Online Teacher Hub — إعداد د. محسن الكاشف
+        </footer>
+    </div>
+
+    <!-- Custom Notification Modal -->
+    <div id="customModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="glass-card max-w-md w-full rounded-2xl p-6 border-2 border-blue-500/50 shadow-2xl text-center space-y-4">
+            <div id="modalIcon" class="text-5xl">🌟</div>
+            <h3 id="modalTitle" class="text-xl font-bold text-white">إنجاز جديد!</h3>
+            <p id="modalMessage" class="text-slate-200 text-base leading-relaxed"></p>
+            <button onclick="closeModal()" class="w-full py-3.5 btn-gradient text-white font-bold rounded-xl shadow-lg text-base">
+                متابعة المغامرة 🚀
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const vocabData = {
+            generalNouns: {
+                title: "1. General Nouns — أسماء عامة",
+                items: [
+                    { word: "biologist", meaning: "عالم أحياء", type: "اسم (Noun)", example: "The biologist studied marine life.", exampleAr: "درس عالم الأحياء الحياة البحرية.", tip: "تُطلق على العالم المتخصص في علم الأحياء." },
+                    { word: "citizen", meaning: "مواطن", type: "اسم (Noun)", example: "Every citizen has rights and duties.", exampleAr: "لكل مواطن حقوق وواجبات.", tip: "تعبر عن الشخص المنتمي لدولة معينة." },
+                    { word: "currency", meaning: "عملة نقدية", type: "اسم (Noun)", example: "The local currency is stable.", exampleAr: "العملة المحلية مستقرة.", tip: "تستخدم للإشارة إلى العملة الرسمية للبلاد." },
+                    { word: "exploration", meaning: "استكشاف", type: "اسم (Noun)", example: "Space exploration advances fast.", exampleAr: "استكشاف الفضاء يتقدم بسرعة.", tip: "تعني اكتشاف أماكن أو مجالات جديدة." },
+                    { word: "federation", meaning: "اتحاد / فيدرالية", type: "اسم (Noun)", example: "Sports federation organized the event.", exampleAr: "نظم اتحاد الرياضة الفعالية.", tip: "تطلق على الاتحادات الرسمية أو الكيانات الموحدة." },
+                    { word: "government", meaning: "حكومة", type: "اسم (Noun)", example: "The government launched new projects.", exampleAr: "أطلقت الحكومة مشاريع جديدة.", tip: "الجهة المسؤولة عن إدارة الدولة." },
+                    { word: "infrastructure", meaning: "بنية تحتية", type: "اسم (Noun)", example: "Good infrastructure boosts economy.", exampleAr: "البنية التحتية الجيدة تعزز الاقتصاد.", tip: "تشمل الطرق والجسور والشبكات الأساسية." },
+                    { word: "reunification", meaning: "إعادة توحيد", type: "اسم (Noun)", example: "Reunification brought joy to families.", exampleAr: "أحضرت إعادة التوحيد الفرح للعائلات.", tip: "تعني لم شمل أجزاء كانت مقسمة." },
+                    { word: "satellite", meaning: "قمر صناعي", type: "اسم (Noun)", example: "Communication satellites orbit Earth.", exampleAr: "أقمار الاتصالات الصناعية تدور حول الأرض.", tip: "أجهزة تدور بالفضاء لأغراض الاتصالات والبحث." },
+                    { word: "transmission", meaning: "بث / نقل", type: "اسم (Noun)", example: "Live transmission started now.", exampleAr: "بدأ البث المباشر الآن.", tip: "تشير إلى نقل الإشارات أو المعلومات." }
+                ]
+            },
+            globalIssues: {
+                title: "2. Global Issues — قضايا عالمية",
+                items: [
+                    { word: "disease", meaning: "مرض", type: "اسم (Noun)", example: "Scientists fight dangerous diseases.", exampleAr: "يحارب العلماء الأمراض الخطيرة.", tip: "تعبر عن الأمراض الصحية العامة." },
+                    { word: "economy", meaning: "اقتصاد", type: "اسم (Noun)", example: "The global economy is growing.", exampleAr: "الاقتصاد العالمي ينمو.", tip: "يشير إلى الحالة المالية والتجارية للدول." },
+                    { word: "endangered species", meaning: "أنواع مهددة بالانقراض", type: "اسم (Noun)", example: "We must protect endangered species.", exampleAr: "يجب أن نحمي الأنواع المهددة بالانقراض.", tip: "حيوانات أو نباتات قريبة من الاختفاء الأبدي." },
+                    { word: "fresh water", meaning: "مياه عذبة", type: "اسم (Noun)", example: "Fresh water is vital for survival.", exampleAr: "المياه العذبة حيوية للبقاء.", tip: "المياه الصالحة للشرب والري." },
+                    { word: "globalization", meaning: "عولمة", type: "اسم (Noun)", example: "Globalization connects world markets.", exampleAr: "العولمة تربط أسواق العالم.", tip: "اندماج الاقتصاد والثقافات عالمياً." },
+                    { word: "global warming", meaning: "الاحتباس الحراري", type: "اسم (Noun)", example: "Global warming melts ice caps.", exampleAr: "الاحتباس الحراري يذيب القمم الجليدية.", tip: "ارتفاع درجة حرارة الأرض." },
+                    { word: "natural disaster", meaning: "كارثة طبيعية", type: "اسم (Noun)", example: "Earthquakes are natural disasters.", exampleAr: "الزلازل كوارث طبيعية.", tip: "أحداث طبيعية مدمرة كالزلازل والفيضانات." },
+                    { word: "overpopulation", meaning: "زحام سكاني / زيادة سكانية", type: "اسم (Noun)", example: "Overpopulation strains resources.", exampleAr: "الزيادة السكانية تضغط على الموارد.", tip: "تزايد عدد السكان بشكل يفوق الموارد." },
+                    { word: "pollution", meaning: "تلوث", type: "اسم (Noun)", example: "Air pollution harms health.", exampleAr: "تلوث الهواء يضر بالصحة.", tip: "إدخال مواد ضارة للبيئة." },
+                    { word: "poverty", meaning: "فقر", type: "اسم (Noun)", example: "Charity helps reduce poverty.", exampleAr: "الجمعيات الخيرية تساعد في تقليل الفقر.", tip: "نقص الاحتياجات الأساسية للعيش." },
+                    { word: "security", meaning: "أمن", type: "اسم (Noun)", example: "National security is top priority.", exampleAr: "الأمن القومي أولوية قصوى.", tip: "حماية الاستقرار والسلام العام." },
+                    { word: "terrorism", meaning: "إرهاب", type: "اسم (Noun)", example: "Nations unite against terrorism.", exampleAr: "تتحد الدول ضد الإرهاب.", tip: "أعمال العنف المنظمة لبث الرعب." },
+                    { word: "traffic", meaning: "مرور / ازدحام مروري", type: "اسم (Noun)", example: "Heavy traffic delayed my arrival.", exampleAr: "الازحام المروري أخر وصولي.", tip: "حركة المركبات في الشوارع." },
+                    { word: "unemployment", meaning: "بطالة", type: "اسم (Noun)", example: "New jobs reduce unemployment.", exampleAr: "الوظائف الجديدة تقلل البطالة.", tip: "عدم توفر فرص عمل للقادرين." }
+                ]
+            },
+            verbs: {
+                title: "3. Verbs — أفعال",
+                items: [
+                    { word: "affect", meaning: "يؤثر على", type: "فعل (Verb)", example: "Climate changes affect agriculture.", exampleAr: "التغيرات المناخية تؤثر على الزراعة.", tip: "فعل يصف إحداث تغيير في شيء ما." },
+                    { word: "establish", meaning: "يُنشئ / يؤسس", type: "فعل (Verb)", example: "They establish new institutions.", exampleAr: "هم يُنشئون مؤسسات جديدة.", tip: "بناء أو تأسيس شيء رسمي." },
+                    { word: "initiate", meaning: "يُبادئ / يبدأ", type: "فعل (Verb)", example: "The manager will initiate the project.", exampleAr: "سيبدأ المدير المشروع.", tip: "إعطاء إشارة البدء لعمل ما." },
+                    { word: "launch", meaning: "يُطلق", type: "فعل (Verb)", example: "NASA will launch a rocket.", exampleAr: "ستطلق ناسا صاروخاً.", tip: "بدء إرسال شيء كصاروخ أو مبادرة." },
+                    { word: "lose touch", meaning: "يفقد الاتصال", type: "تعبير فعلي (Verb Phr.)", example: "Don't lose touch with old friends.", exampleAr: "لا تفقد الاتصال بالأصدقاء القدامى.", tip: "انقطاع التواصل مع شخص." },
+                    { word: "obtain", meaning: "يحصل على", type: "فعل (Verb)", example: "Students obtain certificates.", exampleAr: "يحصل الطلاب على الشهادات.", tip: "نيل أو امتلاك شيء بعد سعي." }
+                ]
+            },
+            adjectives: {
+                title: "4. Adjectives — صفات",
+                items: [
+                    { word: "accessible", meaning: "قابل للوصول / متاح", type: "صفة (Adjective)", example: "Information is accessible online.", exampleAr: "المعلومات متاحة عبر الإنترنت.", tip: "صفة لشيء سهل الوصول إليه." },
+                    { word: "legendary", meaning: "أسطوري", type: "صفة (Adjective)", example: "He achieved legendary status.", exampleAr: "حقق مكانة أسطورية.", tip: "تصف شخصاً أو شيئاً ذا شهرة واسعة." },
+                    { word: "numerous", meaning: "عديد / كثير", type: "صفة (Adjective)", example: "There are numerous benefits.", exampleAr: "هناك فوائد عديدة.", tip: "تدل على الكثرة العددية." }
+                ]
+            },
+            vision2030: {
+                title: "5. Vision 2030 — رؤية السعودية 2030",
+                items: [
+                    { word: "transforming", meaning: "مُحَوِّل / يَتحول", type: "صفة/فعل (Adj/Verb)", example: "The country is transforming rapidly.", exampleAr: "تتحول البلاد بسرعة.", tip: "إحداث تغيير جذري وشامل." },
+                    { word: "hub", meaning: "مركز محوري / ملتقى", type: "اسم (Noun)", example: "Riyadh is a major regional hub.", exampleAr: "الرياض مركز إقليمي رئيسي.", tip: "نقطة التقاء أو مركز نشاط." },
+                    { word: "vibrant", meaning: "نابض بالحياة / حيوي", type: "صفة (Adjective)", example: "Saudi Arabia has a vibrant culture.", exampleAr: "للمملكة العربية السعودية ثقافة نابضة بالحياة.", tip: "تصف الحيوية والنشاط." },
+                    { word: "thriving", meaning: "مزدهر / متنامٍ", type: "صفة (Adjective)", example: "The economy is thriving.", exampleAr: "الاقتصاد مزدهر.", tip: "ينمو وينجح بقوة." },
+                    { word: "ambitious", meaning: "طموح", type: "صفة (Adjective)", example: "Vision 2030 is an ambitious plan.", exampleAr: "رؤية 2030 خطة طموحة.", tip: "يسعى لتحقيق أهداف عظيمة." },
+                    { word: "enterprises", meaning: "شركات / مشروعات", type: "اسم (Noun)", example: "Small enterprises boost growth.", exampleAr: "المشروعات الصغيرة تعزز النمو.", tip: "شركات تجارية أو مبادرات اقتصادية." },
+                    { word: "diversify", meaning: "يُنوع", type: "فعل (Verb)", example: "Nations diversify their economy.", exampleAr: "تُنَوِّع الدول اقتصادها.", tip: "عدم الاعتماد على مصدر واحد." },
+                    { word: "transparent", meaning: "شفاف", type: "صفة (Adjective)", example: "Government operations are transparent.", exampleAr: "العمليات الحكومية شفافة.", tip: "واضوح وخلو من الغموض." }
+                ]
+            },
+            expressions: {
+                title: "6. Expressions — تعبيرات شائعة",
+                items: [
+                    { word: "take for granted", meaning: "يأخذ كأمر مسلّم به", type: "تعبير (Expression)", example: "Don't take health for granted.", exampleAr: "لا تأخذ الصحة كأمر مسلّم به.", tip: "الاعتياد على شيء وعدم تقدير قيمته." },
+                    { word: "in fact", meaning: "في الواقع", type: "تعبير (Expression)", example: "In fact, I love learning English.", exampleAr: "في الواقع، أنا أحب تعلم الإنجليزية.", tip: "تستخدم لتأكيد معلومة أو إضافتها." },
+                    { word: "you see", meaning: "كما تعلم / ألا ترى", type: "تعبير (Expression)", example: "You see, change is necessary.", exampleAr: "كما ترى، التغيير ضروري.", tip: "لتوضيح فكرة للمستمع." },
+                    { word: "by the way", meaning: "بالمناسبة", type: "تعبير (Expression)", example: "By the way, did you study grammar?", exampleAr: "بالمناسبة، هل درست القواعد؟", tip: "تستخدم لفتح موضوع جانبي." },
+                    { word: "fit in", meaning: "ينسجم / يتأقلم", type: "تعبير فعلي (Verb Phr.)", example: "He tried to fit in the new school.", exampleAr: "حاول الانسجام في المدرسة الجديدة.", tip: "التوافق مع بيئة أو مجموعة." }
+                ]
+            }
+        };
+
+        let state = {
+            currentScreen: 'home',
+            activeVocabCategory: null,
+            activeGrammarLevel: 1,
+            learnedWords: JSON.parse(localStorage.getItem('mg_learnedWords')) || [],
+            points: parseInt(localStorage.getItem('mg_points')) || 0,
+            stars: parseInt(localStorage.getItem('mg_stars')) || 0,
+            completedLevels: JSON.parse(localStorage.getItem('mg_completedLevels')) || { vocab: [], grammar: [1] },
+            examScores: JSON.parse(localStorage.getItem('mg_examScores')) || {},
+            screenHistory: ['home']
+        };
+
+        function saveState() {
+            localStorage.setItem('mg_learnedWords', JSON.stringify(state.learnedWords));
+            localStorage.setItem('mg_points', state.points);
+            localStorage.setItem('mg_stars', state.stars);
+            localStorage.setItem('mg_completedLevels', JSON.stringify(state.completedLevels));
+            localStorage.setItem('mg_examScores', JSON.stringify(state.examScores));
+            updateHeader();
+        }
+
+        function updateHeader() {
+            document.getElementById('headerStars').innerText = state.stars;
+            document.getElementById('headerPoints').innerText = state.points;
+        }
+
+        function navigateTo(screen, params = {}) {
+            if (state.currentScreen !== screen) {
+                state.screenHistory.push(screen);
+            }
+            state.currentScreen = screen;
+            if (params.category) state.activeVocabCategory = params.category;
+            if (params.grammarLevel) state.activeGrammarLevel = params.grammarLevel;
+
+            const navContainer = document.getElementById('navBarContainer');
+            if (state.currentScreen === 'home') {
+                navContainer.classList.add('hidden');
+                state.screenHistory = ['home'];
+            } else {
+                navContainer.classList.remove('hidden');
+            }
+
+            render();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function goBack() {
+            if (state.screenHistory.length > 1) {
+                state.screenHistory.pop();
+                state.currentScreen = state.screenHistory[state.screenHistory.length - 1];
+                if (state.currentScreen === 'home') {
+                    document.getElementById('navBarContainer').classList.add('hidden');
+                }
+                render();
+            } else {
+                navigateTo('home');
+            }
+        }
+
+        function showModal(title, message, icon = '🌟') {
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalMessage').innerText = message;
+            document.getElementById('modalIcon').innerText = icon;
+            document.getElementById('customModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('customModal').classList.add('hidden');
+        }
+
+        function speakText(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.9;
+                window.speechSynthesis.speak(utterance);
+            } else {
+                showModal('النطق غير متوفر', 'متصفحك لا يدعم خاصية التحدث الصوتي.', '⚠️');
+            }
+        }
+
+        function render() {
+            updateHeader();
+            const main = document.getElementById('mainView');
+            
+            switch (state.currentScreen) {
+                case 'home':
+                    main.innerHTML = renderHomeScreen();
+                    break;
+                case 'vocabMenu':
+                    main.innerHTML = renderVocabMenuScreen();
+                    break;
+                case 'vocabLearn':
+                    main.innerHTML = renderVocabLearnScreen();
+                    break;
+                case 'vocabGames':
+                    main.innerHTML = renderVocabGamesScreen();
+                    break;
+                case 'grammarMenu':
+                    main.innerHTML = renderGrammarMenuScreen();
+                    break;
+                case 'grammarLearn':
+                    main.innerHTML = renderGrammarLearnScreen();
+                    break;
+                case 'grammarExam':
+                    main.innerHTML = renderGrammarExamScreen();
+                    break;
+                case 'reviewMenu':
+                    main.innerHTML = renderReviewScreen();
+                    break;
+                case 'progressMenu':
+                    main.innerHTML = renderProgressScreen();
+                    break;
+                case 'achievementsMenu':
+                    main.innerHTML = renderAchievementsScreen();
+                    break;
+                default:
+                    main.innerHTML = renderHomeScreen();
+            }
+        }
+
+        function renderHomeScreen() {
+            return `
+                <div class="space-y-6">
+                    <div class="glass-card rounded-3xl p-6 md:p-8 text-center relative overflow-hidden shadow-2xl border-2 border-blue-500/40">
+                        <span class="inline-block px-4 py-1.5 bg-blue-500/20 text-blue-300 rounded-full text-xs font-black mb-3 border border-blue-500/40">
+                            Mega Goal 1 — Unit: Big Changes
+                        </span>
+                        <h2 class="text-2xl md:text-4xl font-black text-white mb-3 leading-snug">
+                            مرحباً بك في مغامرة تعلم الإنجليزية! 🚀
+                        </h2>
+                        <p class="text-slate-200 text-sm md:text-base max-w-2xl mx-auto mb-5 leading-relaxed font-semibold">
+                            تعلم المفردات وقواعد الجرامر بطريقة تفاعلية مبسطة تشبه الشرح الفردي خطوة بخطوة (مناسب للصف الأول الثانوي).
+                        </p>
+                        <div class="inline-flex items-center gap-2 bg-slate-900/90 px-5 py-2.5 rounded-xl border border-slate-700 text-xs font-black text-amber-300 shadow">
+                            <span>🎓 إشراف: د. محسن الكاشف</span>
+                            <span>•</span>
+                            <span>Online Teacher Hub</span>
+                        </div>
+                    </div>
+
+                    <!-- Main Navigation Cards -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                        <div onclick="navigateTo('vocabMenu')" class="glass-card rounded-2xl p-6 hover:border-blue-500 cursor-pointer transition-all duration-300 group shadow-xl flex flex-col justify-between">
+                            <div>
+                                <div class="w-14 h-14 rounded-2xl bg-blue-500/20 text-blue-400 flex items-center justify-center text-3xl mb-4 group-hover:scale-110 transition-transform">
+                                    📚
+                                </div>
+                                <h3 class="text-lg font-black text-white mb-1.5">Vocabulary — المفردات</h3>
+                                <p class="text-xs text-slate-300 font-semibold leading-relaxed">تعلم كلمات الوحدة بالنطق، الأمثلة، والتوضيح المفصل.</p>
+                            </div>
+                            <div class="mt-6 flex items-center justify-between text-xs text-blue-400 font-black">
+                                <span>ابدأ المفردات</span>
+                                <span class="group-hover:translate-x-1 transition-transform">⬅</span>
+                            </div>
+                        </div>
+
+                        <div onclick="navigateTo('grammarMenu')" class="glass-card rounded-2xl p-6 hover:border-indigo-500 cursor-pointer transition-all duration-300 group shadow-xl flex flex-col justify-between">
+                            <div>
+                                <div class="w-14 h-14 rounded-2xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-3xl mb-4 group-hover:scale-110 transition-transform">
+                                    ⚙️
+                                </div>
+                                <h3 class="text-lg font-black text-white mb-1.5">Grammar — القواعد التفاعلية</h3>
+                                <p class="text-xs text-slate-300 font-semibold leading-relaxed">شرح تفاعلي خطوة بخطوة مع تدريبات فورية لكل قاعدة وتمرين.</p>
+                            </div>
+                            <div class="mt-6 flex items-center justify-between text-xs text-indigo-400 font-black">
+                                <span>استعراض القواعد</span>
+                                <span class="group-hover:translate-x-1 transition-transform">⬅</span>
+                            </div>
+                        </div>
+
+                        <div onclick="navigateTo('reviewMenu')" class="glass-card rounded-2xl p-6 hover:border-emerald-500 cursor-pointer transition-all duration-300 group shadow-xl flex flex-col justify-between">
+                            <div>
+                                <div class="w-14 h-14 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-3xl mb-4 group-hover:scale-110 transition-transform">
+                                    🎯
+                                </div>
+                                <h3 class="text-lg font-black text-white mb-1.5">Review — المراجعة الشاملة</h3>
+                                <p class="text-xs text-slate-300 font-semibold leading-relaxed">اختبر استيعابك لكل ما تعلمته في الوحدة في مكان واحد.</p>
+                            </div>
+                            <div class="mt-6 flex items-center justify-between text-xs text-emerald-400 font-black">
+                                <span>ابدأ المراجعة</span>
+                                <span class="group-hover:translate-x-1 transition-transform">⬅</span>
+                            </div>
+                        </div>
+
+                        <div onclick="navigateTo('progressMenu')" class="glass-card rounded-2xl p-6 hover:border-amber-500 cursor-pointer transition-all duration-300 group shadow-xl flex flex-col justify-between">
+                            <div>
+                                <div class="w-14 h-14 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-3xl mb-4 group-hover:scale-110 transition-transform">
+                                    📊
+                                </div>
+                                <h3 class="text-lg font-black text-white mb-1.5">My Progress — تقدمي</h3>
+                                <p class="text-xs text-slate-300 font-semibold leading-relaxed">تابع الكلمات المتقنة، النقاط، والنجوم المحققة بدقة.</p>
+                            </div>
+                            <div class="mt-6 flex items-center justify-between text-xs text-amber-400 font-black">
+                                <span>عرض التقدم</span>
+                                <span class="group-hover:translate-x-1 transition-transform">⬅</span>
+                            </div>
+                        </div>
+
+                        <div onclick="navigateTo('achievementsMenu')" class="glass-card rounded-2xl p-6 hover:border-purple-500 cursor-pointer transition-all duration-300 group shadow-xl flex flex-col justify-between">
+                            <div>
+                                <div class="w-14 h-14 rounded-2xl bg-purple-500/20 text-purple-400 flex items-center justify-center text-3xl mb-4 group-hover:scale-110 transition-transform">
+                                    🏆
+                                </div>
+                                <h3 class="text-lg font-black text-white mb-1.5">Achievements — الأوسمة</h3>
+                                <p class="text-xs text-slate-300 font-semibold leading-relaxed">شاهد الأوسمة التعليمية وشارات التميز التي حصلت عليها.</p>
+                            </div>
+                            <div class="mt-6 flex items-center justify-between text-xs text-purple-400 font-black">
+                                <span>عرض الأوسمة</span>
+                                <span class="group-hover:translate-x-1 transition-transform">⬅</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderVocabMenuScreen() {
+            let html = `
+                <div class="space-y-6">
+                    <div class="glass-card rounded-2xl p-6 border border-blue-500/40 shadow-xl">
+                        <h2 class="text-xl md:text-2xl font-black text-white mb-2">📚 قسم المفردات — Vocabulary</h2>
+                        <p class="text-xs md:text-sm text-slate-200 font-semibold">اختر إحدى المجموعات للتعلم والتدرب. كل كلمة تتقنها تمنحك نقطة ونجمة واحدة فقط.</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            `;
+
+            for (const [key, category] of Object.entries(vocabData)) {
+                let learnedCount = category.items.filter(item => state.learnedWords.includes(item.word)).length;
+                let totalCount = category.items.length;
+                let percent = Math.round((learnedCount / totalCount) * 100);
+
+                html += `
+                    <div class="glass-card rounded-2xl p-5 border border-slate-700 hover:border-blue-500 transition-all shadow-xl flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-start mb-3">
+                                <h3 class="font-black text-white text-base">${category.title}</h3>
+                                <span class="text-xs bg-slate-800 text-blue-300 px-3 py-1 rounded-xl border border-slate-600 font-bold">${totalCount} كلمات</span>
+                            </div>
+                            <div class="w-full bg-slate-900 rounded-full h-3 mb-2 overflow-hidden border border-slate-800">
+                                <div class="bg-gradient-to-r from-blue-500 to-indigo-500 h-3 rounded-full" style="width: ${percent}%"></div>
+                            </div>
+                            <p class="text-xs text-slate-300 font-semibold">تم إتقان ${learnedCount} من ${totalCount} (${percent}%)</p>
+                        </div>
+                        <div class="mt-5 flex gap-2">
+                            <button onclick="navigateTo('vocabLearn', {category: '${key}'})" class="flex-1 py-2.5 px-3 btn-gradient text-white text-xs font-black rounded-xl shadow">
+                                تعلم واستعراض 📖
+                            </button>
+                            <button onclick="navigateTo('vocabGames', {category: '${key}'})" class="py-2.5 px-4 bg-slate-800 hover:bg-slate-700 text-slate-100 text-xs font-black rounded-xl border border-slate-600 shadow">
+                                الألعاب 🎮
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            html += `</div></div>`;
+            return html;
+        }
+
+        let currentLearnIndex = 0;
+        function renderVocabLearnScreen() {
+            const category = vocabData[state.activeVocabCategory];
+            if (!category) return `<div class="p-6 text-center">عذراً، المجموعة غير موجودة.</div>`;
+            
+            if (currentLearnIndex >= category.items.length) currentLearnIndex = 0;
+            if (currentLearnIndex < 0) currentLearnIndex = category.items.length - 1;
+
+            const item = category.items[currentLearnIndex];
+            const isLearned = state.learnedWords.includes(item.word);
+
+            return `
+                <div class="space-y-6 max-w-xl mx-auto">
+                    <div class="glass-card rounded-2xl p-5 flex justify-between items-center border border-slate-700 shadow-xl">
+                        <h3 class="font-black text-white text-base">${category.title}</h3>
+                        <span class="text-xs bg-blue-500/20 text-blue-300 px-3.5 py-1 rounded-xl font-black border border-blue-500/30">الكلمة ${currentLearnIndex + 1} من ${category.items.length}</span>
+                    </div>
+
+                    <div class="glass-card rounded-3xl p-6 md:p-8 border-2 border-blue-500/50 shadow-2xl space-y-6 text-center relative">
+                        <div class="absolute top-4 left-4">
+                            <button onclick="speakText('${item.word}')" class="w-12 h-12 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl flex items-center justify-center text-xl shadow-lg transition-transform hover:scale-105" title="استمع للنطق الأمريكي">
+                                🔊
+                            </button>
+                        </div>
+
+                        <div class="pt-2">
+                            <span class="text-xs bg-indigo-500/20 text-indigo-300 px-3.5 py-1 rounded-full border border-indigo-500/40 font-black">${item.type}</span>
+                            <h2 class="text-3xl md:text-4xl font-black text-white mt-3 mb-1 tracking-wide">${item.word}</h2>
+                            <p class="text-xl md:text-2xl font-black text-amber-400 mb-4">${item.meaning}</p>
+                        </div>
+
+                        <div class="bg-slate-900/80 p-4.5 rounded-2xl border border-slate-800 text-right space-y-2 shadow-inner">
+                            <p class="text-sm font-black text-slate-100">🇬🇧 Example: <span class="text-blue-300 font-semibold">${item.example}</span></p>
+                            <p class="text-sm font-black text-slate-100">🇸🇦 الترجمة: <span class="text-slate-300 font-semibold">${item.exampleAr}</span></p>
+                            <p class="text-xs text-amber-300 font-bold pt-2 border-t border-slate-800">💡 توضيح: ${item.tip}</p>
+                        </div>
+
+                        <div>
+                            ${isLearned ? 
+                                `<div class="inline-flex items-center gap-2 bg-emerald-500/20 text-emerald-300 px-5 py-2.5 rounded-xl text-xs font-black border border-emerald-500/40">
+                                    <span>✅ تم إتقان هذه الكلمة (+1 نقطة ونجمة منحت مرة واحدة)</span>
+                                </div>` :
+                                `<button onclick="markWordLearned('${item.word}')" class="py-3 px-7 btn-gradient text-white text-sm font-black rounded-xl shadow-lg">
+                                    أتقنت هذه الكلمة ⭐ (احصل على نقطة ونجمة)
+                                </button>`
+                            }
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between items-center gap-4">
+                        <button onclick="currentLearnIndex--; render();" class="flex-1 py-3.5 bg-slate-800 hover:bg-slate-700 text-white font-black rounded-xl border border-slate-700 shadow text-sm">
+                            ⬅ الكلمة السابقة
+                        </button>
+                        <button onclick="currentLearnIndex++; render();" class="flex-1 py-3.5 btn-gradient text-white font-black rounded-xl shadow text-sm">
+                            الكلمة التالية ➡
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function markWordLearned(word) {
+            if (!state.learnedWords.includes(word)) {
+                state.learnedWords.push(word);
+                state.points += 1;
+                state.stars += 1;
+                saveState();
+                showModal('أحسنت!', `لقد أتقنت الكلمة "${word}" وحصلت على نقطة ونجمة جديدة!`, '⭐');
+                render();
+            }
+        }
+
+        let currentGameType = 'matching';
+        let gameActiveData = null;
+
+        function renderVocabGamesScreen() {
+            const category = vocabData[state.activeVocabCategory];
+            if (!category) return `<div class="p-6 text-center">عذراً، المجموعة غير موجودة.</div>`;
+
+            return `
+                <div class="space-y-6 max-w-xl mx-auto">
+                    <div class="glass-card rounded-2xl p-5 border border-blue-500/40 shadow-xl space-y-4">
+                        <div>
+                            <h3 class="font-black text-white text-base">🎮 ألعاب المفردات التفاعلية</h3>
+                            <p class="text-xs text-blue-300 font-bold">${category.title}</p>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2 pt-2 border-t border-slate-700">
+                            <button onclick="setGameType('matching')" class="tab-btn px-2 py-3 text-xs font-black rounded-xl border ${currentGameType === 'matching' ? 'active' : 'bg-slate-900 border-slate-700 text-slate-300 hover:bg-slate-800'}">🔗 توصيل</button>
+                            <button onclick="setGameType('mcq')" class="tab-btn px-2 py-3 text-xs font-black rounded-xl border ${currentGameType === 'mcq' ? 'active' : 'bg-slate-900 border-slate-700 text-slate-300 hover:bg-slate-800'}">🎯 اختيار المعنى</button>
+                            <button onclick="setGameType('complete')" class="tab-btn px-2 py-3 text-xs font-black rounded-xl border ${currentGameType === 'complete' ? 'active' : 'bg-slate-900 border-slate-700 text-slate-300 hover:bg-slate-800'}">✍️ إكمال الجملة</button>
+                        </div>
+                    </div>
+
+                    <div id="gameContainer" class="glass-card rounded-3xl p-6 border border-slate-700 shadow-xl">
+                        ${renderActiveGame(category)}
+                    </div>
+                </div>
+            `;
+        }
+
+        function setGameType(type) {
+            currentGameType = type;
+            gameActiveData = null;
+            render();
+        }
+
+        function renderActiveGame(category) {
+            if (!gameActiveData) {
+                const items = [...category.items].sort(() => 0.5 - Math.random()).slice(0, 4);
+                if (currentGameType === 'matching') {
+                    gameActiveData = {
+                        items: items,
+                        shuffledMeanings: [...items].sort(() => 0.5 - Math.random()),
+                        selectedWord: null,
+                        matches: {}
+                    };
+                } else if (currentGameType === 'mcq') {
+                    const target = items[0];
+                    const distractors = category.items.filter(i => i.word !== target.word).sort(() => 0.5 - Math.random()).slice(0, 3);
+                    const options = [target, ...distractors].sort(() => 0.5 - Math.random());
+                    gameActiveData = { target, options, answered: false };
+                } else if (currentGameType === 'complete') {
+                    const target = items[0];
+                    const distractors = category.items.filter(i => i.word !== target.word).sort(() => 0.5 - Math.random()).slice(0, 3);
+                    const options = [target, ...distractors].sort(() => 0.5 - Math.random());
+                    gameActiveData = { target, options, answered: false };
+                }
+            }
+
+            if (currentGameType === 'matching') {
+                const data = gameActiveData;
+                let allMatched = Object.keys(data.matches).length === data.items.length;
+
+                if (allMatched) {
+                    return `
+                        <div class="text-center space-y-4 py-6">
+                            <div class="text-5xl">🏆</div>
+                            <h3 class="text-xl font-black text-white">رائع! أكملت لعبة التوصيل بنجاح</h3>
+                            <button onclick="gameActiveData = null; render();" class="py-3 px-7 btn-gradient text-white font-black rounded-xl shadow text-sm">العب مرة أخرى 🔄</button>
+                        </div>
+                    `;
+                }
+
+                return `
+                    <div class="space-y-4">
+                        <p class="text-xs text-slate-300 font-bold text-center">اضغط على الكلمة الإنجليزية ثم اضغط على المعنى العربي المطابق:</p>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="space-y-2">
+                                ${data.items.map(item => {
+                                    const isMatched = Object.keys(data.matches).includes(item.word);
+                                    const isSelected = data.selectedWord === item.word;
+                                    return `
+                                        <button ${isMatched ? 'disabled' : ''} onclick="selectGameWord('${item.word}')" class="w-full p-3.5 rounded-xl text-xs font-black text-right border transition-all ${isMatched ? 'bg-emerald-500/20 border-emerald-500 text-emerald-300 opacity-50' : isSelected ? 'bg-blue-600 border-blue-400 text-white shadow-lg' : 'bg-slate-900 border-slate-700 text-slate-200 hover:bg-slate-800'}">
+                                            ${item.word} ${isMatched ? '✓' : ''}
+                                        </button>
+                                    `;
+                                }).join('')}
+                            </div>
+                            <div class="space-y-2">
+                                ${data.shuffledMeanings.map(item => {
+                                    const isMatched = Object.values(data.matches).includes(item.meaning);
+                                    return `
+                                        <button ${isMatched ? 'disabled' : ''} onclick="selectGameMeaning('${item.meaning}', '${item.word}')" class="w-full p-3.5 rounded-xl text-xs font-black text-right border transition-all ${isMatched ? 'bg-emerald-500/20 border-emerald-500 text-emerald-300 opacity-50' : 'bg-slate-900 border-slate-700 text-slate-200 hover:bg-slate-800'}">
+                                            ${item.meaning} ${isMatched ? '✓' : ''}
+                                        </button>
+                                    `;
+                                }).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (currentGameType === 'mcq') {
+                const data = gameActiveData;
+                return `
+                    <div class="space-y-4 text-center">
+                        <div class="flex justify-center">
+                            <button onclick="speakText('${data.target.word}')" class="px-4 py-2 bg-blue-600 text-white rounded-xl text-xs font-black shadow">🔊 استمع للكلمة</button>
+                        </div>
+                        <h3 class="text-2xl font-black text-white">${data.target.word}</h3>
+                        <p class="text-xs text-slate-300 font-bold">ما هو المعنى الصحيح لهذه الكلمة؟</p>
+                        
+                        <div class="grid grid-cols-1 gap-2.5 pt-2">
+                            ${data.options.map(opt => {
+                                let btnClass = 'bg-slate-900 border-slate-700 text-slate-200 hover:bg-slate-800';
+                                if (data.answered) {
+                                    if (opt.word === data.target.word) btnClass = 'bg-emerald-600/40 border-emerald-500 text-emerald-200';
+                                    else if (opt.selected) btnClass = 'bg-rose-600/40 border-rose-500 text-rose-200';
+                                }
+                                return `
+                                    <button ${data.answered ? 'disabled' : ''} onclick="checkMCQ('${opt.word}', '${data.target.word}')" class="w-full p-4 rounded-xl text-sm font-black border transition-all ${btnClass}">
+                                        ${opt.meaning}
+                                    </button>
+                                `;
+                            }).join('')}
+                        </div>
+                        ${data.answered ? `
+                            <button onclick="gameActiveData = null; render();" class="mt-4 py-3 px-7 btn-gradient text-white text-xs font-black rounded-xl shadow">السؤال التالي ➡</button>
+                        ` : ''}
+                    </div>
+                `;
+            } else if (currentGameType === 'complete') {
+                const data = gameActiveData;
+                let sentenceWithBlank = data.target.example.replace(new RegExp(data.target.word, 'gi'), '_____');
+                return `
+                    <div class="space-y-4 text-center">
+                        <p class="text-xs text-slate-300 font-bold">اختر الكلمة المناسبة لإكمال الجملة:</p>
+                        <div class="bg-slate-900 p-4.5 rounded-2xl border border-slate-800 text-base font-black text-blue-300 leading-relaxed shadow-inner">
+                            "${sentenceWithBlank}"
+                        </div>
+                        <p class="text-xs text-slate-400 font-bold">(${data.target.exampleAr})</p>
+
+                        <div class="grid grid-cols-2 gap-2.5 pt-2">
+                            ${data.options.map(opt => {
+                                let btnClass = 'bg-slate-900 border-slate-700 text-slate-200 hover:bg-slate-800';
+                                if (data.answered) {
+                                    if (opt.word === data.target.word) btnClass = 'bg-emerald-600/40 border-emerald-500 text-emerald-200';
+                                    else if (opt.selected) btnClass = 'bg-rose-600/40 border-rose-500 text-rose-200';
+                                }
+                                return `
+                                    <button ${data.answered ? 'disabled' : ''} onclick="checkComplete('${opt.word}', '${data.target.word}')" class="p-3.5 rounded-xl text-sm font-black border transition-all ${btnClass}">
+                                        ${opt.word}
+                                    </button>
+                                `;
+                            }).join('')}
+                        </div>
+                        ${data.answered ? `
+                            <button onclick="gameActiveData = null; render();" class="mt-4 py-3 px-7 btn-gradient text-white text-xs font-black rounded-xl shadow">السؤال التالي ➡</button>
+                        ` : ''}
+                    </div>
+                `;
+            }
+        }
+
+        function selectGameWord(word) {
+            gameActiveData.selectedWord = word;
+            render();
+        }
+
+        function selectGameMeaning(meaning, targetWord) {
+            if (!gameActiveData.selectedWord) return;
+            if (gameActiveData.selectedWord === targetWord) {
+                gameActiveData.matches[targetWord] = meaning;
+                speakText(targetWord);
+                state.points += 1;
+                saveState();
+            }
+            gameActiveData.selectedWord = null;
+            render();
+        }
+
+        function checkMCQ(selectedWord, targetWord) {
+            gameActiveData.answered = true;
+            gameActiveData.options.forEach(o => { if (o.word === selectedWord) o.selected = true; });
+            if (selectedWord === targetWord) {
+                state.points += 2;
+                saveState();
+            }
+            render();
+        }
+
+        function checkComplete(selectedWord, targetWord) {
+            gameActiveData.answered = true;
+            gameActiveData.options.forEach(o => { if (o.word === selectedWord) o.selected = true; });
+            if (selectedWord === targetWord) {
+                state.points += 2;
+                saveState();
+            }
+            render();
+        }
+
+        function renderGrammarMenuScreen() {
+            const levels = [
+                { id: 1, title: "Level 1: Simple Present vs. Present Progressive", desc: "أزمنة المضارع البسيط والمستمر، الاستخدام، التكوين، والنفي والسؤال وأفعال الحالة." },
+                { id: 2, title: "Level 2: Simple Past vs. Present Perfect", desc: "أزمنة الماضي البسيط والمضارع التام، since وfor، وتصريفات الأفعال V1/V2/V3." },
+                { id: 3, title: "Level 3: Past Progressive + When + Simple Past", desc: "الماضي المستمر مع when وwhile، وتداخل الأحداث في الماضي." },
+                { id: 4, title: "Level 4: Past Time Expressions", desc: "التعبيرات الزمنية للماضي ومواضعها وأخطائها الشائعة." }
+            ];
+
+            let html = `
+                <div class="space-y-6">
+                    <div class="glass-card rounded-2xl p-6 border border-indigo-500/40 shadow-xl">
+                        <h2 class="text-xl md:text-2xl font-black text-white mb-2">⚙️ قسم القواعد التفاعلية — Grammar</h2>
+                        <p class="text-xs md:text-sm text-slate-200 font-semibold">شرح تفاعلي تدريجي (مثل معلم خاص) مع تدريبات فورية واختبار من 20 سؤالاً لكل مستوى.</p>
+                    </div>
+                    <div class="grid grid-cols-1 gap-5">
+            `;
+
+            levels.forEach(lvl => {
+                let isUnlocked = state.completedLevels.grammar.includes(lvl.id) || lvl.id === 1 || state.completedLevels.grammar.includes(lvl.id - 1);
+                let examScore = state.examScores[lvl.id];
+
+                html += `
+                    <div class="glass-card rounded-2xl p-6 border ${isUnlocked ? 'border-slate-700 hover:border-indigo-500' : 'border-slate-800 opacity-60'} transition-all shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                        <div>
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="text-xs bg-indigo-500/20 text-indigo-300 px-3 py-1 rounded-xl border border-indigo-500/30 font-black">مستوى ${lvl.id}</span>
+                                <h3 class="font-black text-white text-base md:text-lg">${lvl.title}</h3>
+                            </div>
+                            <p class="text-xs md:text-sm text-slate-300 font-semibold max-w-xl leading-relaxed">${lvl.desc}</p>
+                            ${examScore !== undefined ? `<p class="text-xs font-black text-amber-400 mt-2">⭐ أعلى نتيجة اختبار: ${examScore} / 20 ${examScore >= 17 ? '(ناجح ✅)' : '(يحتاج إعادة محاولة ⚠️)'}</p>` : ''}
+                        </div>
+                        <div class="flex gap-2.5 w-full md:w-auto">
+                            ${isUnlocked ? `
+                                <button onclick="navigateTo('grammarLearn', {grammarLevel: ${lvl.id}})" class="flex-1 md:flex-none py-3 px-6 btn-gradient text-white text-xs font-black rounded-xl shadow">
+                                    📖 الشرح التفاعلي والتدريبات
+                                </button>
+                                <button onclick="navigateTo('grammarExam', {grammarLevel: ${lvl.id}})" class="flex-1 md:flex-none py-3 px-6 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-black rounded-xl shadow">
+                                    📝 اختبار المستوى (20 س)
+                                </button>
+                            ` : `
+                                <div class="px-5 py-3 bg-slate-900 text-slate-400 text-xs font-black rounded-xl border border-slate-700 flex items-center gap-2">
+                                    🔒 المستوى مغلق (أنهِ المستوى السابق بدرجة 17+)
+                                </div>
+                            `}
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += `</div></div>`;
+            return html;
+        }
+
+        let grammarStepIndex = 0;
+        let interactiveAnswers = {};
+
+        function renderGrammarLearnScreen() {
+            const level = state.activeGrammarLevel;
+            const steps = getInteractiveGrammarSteps(level);
+
+            if (grammarStepIndex >= steps.length) grammarStepIndex = steps.length - 1;
+            if (grammarStepIndex < 0) grammarStepIndex = 0;
+
+            const currentStep = steps[grammarStepIndex];
+
+            return `
+                <div class="space-y-6 max-w-2xl mx-auto">
+                    <div class="glass-card rounded-2xl p-5 flex justify-between items-center border border-indigo-500/40 shadow-xl">
+                        <div>
+                            <span class="text-xs bg-indigo-500/20 text-indigo-300 px-3 py-1 rounded-xl font-black border border-indigo-500/30">Grammar Level ${level}</span>
+                            <h3 class="font-black text-white text-base md:text-lg mt-1">شرح تفاعلي خطوة بخطوة</h3>
+                        </div>
+                        <button onclick="navigateTo('grammarExam', {grammarLevel: ${level}})" class="py-2.5 px-5 btn-gradient text-white text-xs font-black rounded-xl shadow">
+                            الانتقال للامتحان النهائي 📝
+                        </button>
+                    </div>
+
+                    <!-- Step Progress Bar -->
+                    <div class="glass-card rounded-2xl p-4 border border-slate-700 shadow space-y-2">
+                        <div class="flex justify-between text-xs font-black text-slate-300">
+                            <span>الخطوة ${grammarStepIndex + 1} من ${steps.length}</span>
+                            <span>${Math.round(((grammarStepIndex + 1) / steps.length) * 100)}% مكتمل</span>
+                        </div>
+                        <div class="w-full bg-slate-900 rounded-full h-3 overflow-hidden border border-slate-800">
+                            <div class="bg-indigo-500 h-3 rounded-full transition-all duration-300" style="width: ${((grammarStepIndex + 1) / steps.length) * 100}%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Step Content Card -->
+                    <div class="glass-card rounded-3xl p-6 md:p-8 border-2 border-indigo-500/50 shadow-2xl space-y-6">
+                        <h4 class="text-lg md:text-xl font-black text-indigo-300 border-b border-slate-800 pb-3 flex items-center gap-2">
+                            <span>🔹</span> ${currentStep.title}
+                        </h4>
+
+                        <div class="text-slate-200 text-sm md:text-base font-semibold leading-relaxed space-y-3">
+                            ${currentStep.explanation}
+                        </div>
+
+                        ${currentStep.examples ? `
+                            <div class="bg-slate-900/90 p-4.5 rounded-2xl border border-slate-800 space-y-3 shadow-inner">
+                                <p class="text-xs font-black text-amber-400">أمثلة توضيحية من الوحدة:</p>
+                                ${currentStep.examples.map(ex => `
+                                    <div class="space-y-1">
+                                        <p class="text-xs md:text-sm font-black text-blue-300">🇬🇧 ${ex.en}</p>
+                                        <p class="text-xs md:text-sm text-slate-300 font-semibold">🇸🇦 ${ex.ar}</p>
+                                        ${ex.note ? `<p class="text-xs text-amber-300 font-bold">💡 ${ex.note}</p>` : ''}
+                                    </div>
+                                `).join('<div class="my-2 border-t border-slate-800"></div>')}
+                            </div>
+                        ` : ''}
+
+                        <!-- Interactive Micro-Exercise for this step -->
+                        ${currentStep.exercise ? `
+                            <div class="bg-indigo-950/40 p-5 rounded-2xl border border-indigo-500/40 space-y-3">
+                                <p class="text-xs md:text-sm font-black text-indigo-200">✍️ تمرين تفاعلي فوري: ${currentStep.exercise.question}</p>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                                    ${currentStep.exercise.options.map((opt, oIdx) => {
+                                        const ansKey = `step_${grammarStepIndex}`;
+                                        const isSelected = interactiveAnswers[ansKey] === oIdx;
+                                        const isCorrect = oIdx === currentStep.exercise.correct;
+                                        const isAnswered = interactiveAnswers[ansKey] !== undefined;
+                                        
+                                        let btnStyle = 'bg-slate-900 border-slate-700 text-slate-200 hover:bg-slate-800';
+                                        if (isAnswered) {
+                                            if (isCorrect) btnStyle = 'bg-emerald-600/40 border-emerald-500 text-emerald-200';
+                                            else if (isSelected) btnStyle = 'bg-rose-600/40 border-rose-500 text-rose-200';
+                                        }
+
+                                        return `
+                                            <button onclick="answerGrammarStep(${grammarStepIndex}, ${oIdx})" class="p-3.5 rounded-xl text-xs font-black border transition-all ${btnStyle}">
+                                                ${opt}
+                                            </button>
+                                        `;
+                                    }).join('')}
+                                </div>
+                                ${interactiveAnswers[`step_${grammarStepIndex}`] !== undefined ? `
+                                    <p class="text-xs font-black ${interactiveAnswers[`step_${grammarStepIndex}`] === currentStep.exercise.correct ? 'text-emerald-400' : 'text-rose-400'} pt-2">
+                                        ${interactiveAnswers[`step_${grammarStepIndex}`] === currentStep.exercise.correct ? '✅ إجابة صحيحة! أحسنت.' : '❌ إجابة غير دقيقة. حاول مرة أخرى أو راجع الشرح.'}
+                                    </p>
+                                ` : ''}
+                            </div>
+                        ` : ''}
+                    </div>
+
+                    <!-- Navigation Buttons -->
+                    <div class="flex justify-between items-center gap-4">
+                        <button ${grammarStepIndex === 0 ? 'disabled' : ''} onclick="grammarStepIndex--; render();" class="flex-1 py-3.5 bg-slate-800 hover:bg-slate-700 text-white font-black rounded-xl border border-slate-700 shadow text-sm disabled:opacity-40">
+                            ⬅ الخطوة السابقة
+                        </button>
+                        <button ${grammarStepIndex === steps.length - 1 ? 'disabled' : ''} onclick="grammarStepIndex++; render();" class="flex-1 py-3.5 btn-gradient text-white font-black rounded-xl shadow text-sm disabled:opacity-40">
+                            الخطوة التالية ➡
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function answerGrammarStep(stepIdx, optionIdx) {
+            interactiveAnswers[`step_${stepIdx}`] = optionIdx;
+            render();
+        }
+
+        function getInteractiveGrammarSteps(level) {
+            if (level === 1) {
+                return [
+                    {
+                        title: "1. المقدمة والفكرة الأساسية للزمنين",
+                        explanation: "يا بطل (طالب الصف الأول الثانوي)، في وحدة Big Changes ندرس الزمنين الأكثر استخداماً: Simple Present (المضارع البسيط) للعادات والروتين والحقائق، وPresent Progressive (المضارع المستمر) للأحداث التي تحدث الآن أو المواقف المؤقتة.",
+                        examples: [
+                            { en: "The government launches new projects.", ar: "تطلق الحكومة مشاريع جديدة (عادة أو خطة ثابتة)." },
+                            { en: "The government is launching a new initiative today.", ar: "تطلق الحكومة مبادرة جديدة اليوم (حدث مؤقت حالي)." }
+                        ],
+                        exercise: {
+                            question: "أي زمن نستخدمه لوصف حقيقة ثابتة أو روتين يومي؟",
+                            options: ["Simple Present", "Present Progressive"],
+                            correct: 0
+                        }
+                    },
+                    {
+                        title: "2. الجملة المثبتة في المضارع البسيط (Affirmative)",
+                        explanation: "مع الضمائر (I, You, We, They) نضع الفعل في شكله الأصلي بدون أي إضافة (Base Verb). أما مع ضمائر الغائب المفرد (He, She, It) فنضيف للفعل (s أو es أو ies).",
+                        examples: [
+                            { en: "I study English every day.", ar: "أدرس الإنجليزية كل يوم." },
+                            { en: "She studies English every day.", ar: "هي تدرس الإنجليزية كل يوم (لاحظ تحول y إلى ies)." }
+                        ],
+                        exercise: {
+                            question: "اختر الجملة الصحيحة مع الضمير He:",
+                            options: ["He work hard.", "He works hard."],
+                            correct: 1
+                        }
+                    },
+                    {
+                        title: "3. قواعد إضافة s و es و ies بدقة",
+                        explanation: "• أغلب الأفعال نضيف لها s (work -> works).\n• الأفعال المنتهية بـ (ch, sh, ss, x, o, z) نضيف لها es (watch -> watches).\n• الفعل المنتهي بحرف y قبله حرف ساكن نحذف y ونضيف ies (study -> studies). أما إذا سبقه حرف متحرك فنضيف s فقط (play -> plays).",
+                        examples: [
+                            { en: "The biologist studies endangered species.", ar: "يدرس عالم الأحياء الأنواع المهددة بالانقراض." }
+                        ],
+                        exercise: {
+                            question: "ما التصريف الصحيح للفعل watch مع she؟",
+                            options: ["watchs", "watches"],
+                            correct: 1
+                        }
+                    },
+                    {
+                        title: "4. النفي في المضارع البسيط (Negative)",
+                        explanation: "لكي ننفي الجملة في المضارع البسيط مع (I, You, We, They) نستخدم don't + المصدر. ومع (He, She, It) نستخدم doesn't + المصدر (ملاحظة: الفعل يعود لأصله بدون s بعد doesn't!).",
+                        examples: [
+                            { en: "I don't lose touch with my friends.", ar: "لا أفقد الاتصال بأصدقائي." },
+                            { en: "He doesn't like pollution.", ar: "هو لا يحب التلوث." }
+                        ],
+                        exercise: {
+                            question: "اختر النفي الصحيح لـ: She likes currency.",
+                            options: ["She doesn't like currency.", "She don't likes currency."],
+                            correct: 0
+                        }
+                    },
+                    {
+                        title: "5. السؤال في المضارع البسيط (Questions)",
+                        explanation: "نصنع السؤال بوضع الفعل المساعد في البداية: Do مع (I, You, We, They) و Does مع (He, She, It)، ثم الفاعل، ثم الفعل في المصدر.",
+                        examples: [
+                            { en: "Do you obtain certificates?", ar: "هل تحصل على شهادات؟ - Yes, I do. / No, I don't." },
+                            { en: "Does he establish enterprises?", ar: "هل يؤسس شركات؟ - Yes, he does. / No, he doesn't." }
+                        ],
+                        exercise: {
+                            question: "السؤال الصحيح مع You هو:",
+                            options: ["Does you study?", "Do you study?"],
+                            correct: 1
+                        }
+                    },
+                    {
+                        title: "6. أسئلة الاستفهام (Wh- Questions)",
+                        explanation: "نضع أداة الاستفهام (What, Where, When, How) في البداية، يليها Do أو Does، ثم الفاعل، ثم الفعل في المصدر.",
+                        examples: [
+                            { en: "What do you study?", ar: "ماذا تدرس؟" },
+                            { en: "Where does he live?", ar: "أين يعيش؟" }
+                        ],
+                        exercise: {
+                            question: "السؤال المناسب للسؤال عن المكان (Where) مع she هو:",
+                            options: ["Where does she live?", "Where do she live?"],
+                            correct: 0
+                        }
+                    },
+                    {
+                        title: "7. المضارع المستمر (Present Progressive) والتكوين",
+                        explanation: "يتكون من: (Subject + am/is/are + verb-ing). نستخدمه للأشياء التي تحدث الآن لحظة الكلام أو المواقف المؤقتة.",
+                        examples: [
+                            { en: "We are discussing global issues now.", ar: "نحن نناقش القضايا العالمية الآن." },
+                            { en: "He is transforming his life this year.", ar: "هو يحول حياته هذا العام (موقف مؤقت)." }
+                        ],
+                        exercise: {
+                            question: "الفعل المناسب مع They في المضارع المستمر هو:",
+                            options: ["is studying", "are studying"],
+                            correct: 1
+                        }
+                    },
+                    {
+                        title: "8. النفي والسؤال في المضارع المستمر",
+                        explanation: "• النفي: Subject + am/is/are + not + verb-ing (isn't / aren't).\n• السؤال: Am / Is / Are + subject + verb-ing?",
+                        examples: [
+                            { en: "They aren't polluting the fresh water.", ar: "هم لا يلوثون المياه العذبة." },
+                            { en: "Are you learning English?", ar: "هل تعلم الإنجليزية؟" }
+                        ],
+                        exercise: {
+                            question: "النفي الصحيح لـ: He is working هو:",
+                            options: ["He isn't working.", "He doesn't working."],
+                            correct: 0
+                        }
+                    },
+                    {
+                        title: "9. أفعال الحالة (Stative Verbs)",
+                        explanation: "احفظ جيداً: أفعال الشعور والتفكير والحواس (مثل know, want, like, need, believe) لا تأتي في الزمن المستمر (am/is/are + ing) لأنها تعبر عن حالة مستقرة وليست حركة.",
+                        examples: [
+                            { en: "I know the answer. (Correct)", ar: "أعرف الإجابة." },
+                            { en: "I am knowing the answer. (Incorrect ❌)", ar: "لا توجد في الإنجليزية." }
+                        ],
+                        exercise: {
+                            question: "أي جملة صحيحة نحوياً؟",
+                            options: ["I am wanting water.", "I want water."],
+                            correct: 1
+                        }
+                    }
+                ];
+            } else if (level === 2) {
+                return [
+                    {
+                        title: "1. الماضي البسيط (Simple Past) - الفكرة والتكوين",
+                        explanation: "نستخدم الماضي البسيط لحدث وقع وانتهى في وقت ماضٍ محدد. الأفعال إما منتظمة (تأخذ ed) أو غير منتظمة (تتغير كلياً مثل go -> went).",
+                        examples: [
+                            { en: "The government launched the satellite yesterday.", ar: "أطلقت الحكومة القمر الصناعي أمس." },
+                            { en: "They established new enterprises last year.", ar: "أسسوا شركات جديدة العام الماضي." }
+                        ],
+                        exercise: {
+                            question: "التصريف الثاني (V2) للفعل go هو:",
+                            options: ["goed", "went"],
+                            correct: 1
+                        }
+                    },
+                    {
+                        title: "2. النفي والسؤال في الماضي البسيط",
+                        explanation: "• النفي: Subject + didn't + المصدر.\n• السؤال: Did + subject + المصدر.\n(تذكر دائماً أن didn't و did يعيدان الفعل لأصله).",
+                        examples: [
+                            { en: "I didn't lose touch with my friends.", ar: "لم أفقد الاتصال بأصدقائي." },
+                            { en: "Did you visit Cairo in 2020?", ar: "هل زرت القاهرة في 2020؟" }
+                        ],
+                        exercise: {
+                            question: "التصحيح بعد didn't في: I didn't went هو:",
+                            options: ["I didn't go", "I didn't went"],
+                            correct: 0
+                        }
+                    },
+                    {
+                        title: "3. المضارع التام (Present Perfect) - الفكرة والتكوين",
+                        explanation: "يتكون من: (Subject + have/has + V3). نستخدمه لحدث وقع في الماضي وله أثر في الحاضر، أو لتجربة حياتية دون تحديد وقت ماضٍ منتهٍ.",
+                        examples: [
+                            { en: "I have visited London three times.", ar: "زرت لندن ثلاث مرات (تجربة حياتية)." },
+                            { en: "She has lost her phone.", ar: "فقدت هاتفك (وهو مفقود حتى الآن)." }
+                        ],
+                        exercise: {
+                            question: "الفعل المساعد المناسب مع She في المضارع التام هو:",
+                            options: ["have", "has"],
+                            correct: 1
+                        }
+                    },
+                    {
+                        title: "4. Since vs. For بالتفصيل",
+                        explanation: "• Since تُستخدم مع نقطة بداية محددة (since 2020, since Monday).\n• For تُستخدم مع مدة زمنية إجمالية (for 5 years, for 3 months).",
+                        examples: [
+                            { en: "I have lived here since 2021.", ar: "أعيش هنا منذ 2021." },
+                            { en: "I have lived here for three years.", ar: "أعيش هنا لمدة 3 سنوات." }
+                        ],
+                        exercise: {
+                            question: "نستخدم _____ مع المدة الزمنية الإجمالية (for 3 days).",
+                            options: ["Since", "For"],
+                            correct: 1
+                        }
+                    }
+                ];
+            } else if (level === 3) {
+                return [
+                    {
+                        title: "1. الماضي المستمر (Past Progressive) مع When",
+                        explanation: "نستخدم الماضي المستمر (was/were + V-ing) لوصف حدث كان مستمراً في الماضي، وجاء حدث قصير في الماضي البسيط ليقطعه.",
+                        examples: [
+                            { en: "I was studying when my friend called.", ar: "كنت أدرس عندما اتصل صديقي." },
+                            { en: "When the natural disaster struck, we were sleeping.", ar: "عندما وقعت الكارثة الطبيعية، كنا ننام." }
+                        ],
+                        exercise: {
+                            question: "الفعل مع I في الماضي المستمر هو:",
+                            options: ["was studying", "were studying"],
+                            correct: 0
+                        }
+                    },
+                    {
+                        title: "2. الماضي المستمر مع While",
+                        explanation: "While غالباً يأتي بعدها الماضي المستمر (فعل طويل مستمر)، بينما when يأتي بعدها الماضي البسيط.",
+                        examples: [
+                            { en: "While I was walking, I saw a legendary car.", ar: "بينما كنت أمشي، رأيت سيارة أسطورية." }
+                        ],
+                        exercise: {
+                            question: "الكلمة المناسبة للربط بفعل مستمر غالباً هي:",
+                            options: ["While", "Yesterday"],
+                            correct: 0
+                        }
+                    }
+                ];
+            } else {
+                return [
+                    {
+                        title: "1. التعبيرات الزمنية للماضي (Past Time Expressions)",
+                        explanation: "التعبيرات مثل yesterday, last week, two days ago, in 2010 تحدد وقت وقوع الحدث وتأتي في بداية الجملة أو نهايتها.",
+                        examples: [
+                            { en: "Two days ago, the government launched the project.", ar: "قبل يومين، أطلقت الحكومة المشروع." },
+                            { en: "I moved to Riyadh in 2020.", ar: "انتقلت إلى الرياض في 2020." }
+                        ],
+                        exercise: {
+                            question: "أي تعبير يدل على وقت مضى و يأتي في نهاية التعبير؟",
+                            options: ["two days ago", "tomorrow"],
+                            correct: 0
+                        }
+                    }
+                ];
+            }
+        }
+
+        let examState = {
+            level: null,
+            questions: [],
+            currentIndex: 0,
+            userAnswers: {},
+            submitted: false,
+            score: 0
+        };
+
+        function renderGrammarExamScreen() {
+            const level = state.activeGrammarLevel;
+            if (!examState.questions.length || examState.level !== level) {
+                initExam(level);
+            }
+
+            const q = examState.questions[examState.currentIndex];
+
+            if (examState.submitted) {
+                let passed = examState.score >= 17;
+                return `
+                    <div class="glass-card rounded-3xl p-6 md:p-8 max-w-xl mx-auto text-center space-y-6 border border-slate-700 shadow-2xl">
+                        <div class="text-6xl">${passed ? '🏆' : '⚠️'}</div>
+                        <h3 class="text-2xl font-black text-white">نتيجة امتحان المستوى ${level}</h3>
+                        <div class="text-3xl font-black ${passed ? 'text-emerald-400' : 'text-rose-400'}">
+                            ${examState.score} / 20
+                        </div>
+                        <p class="text-sm font-semibold text-slate-200">
+                            ${passed ? 'مبارك! لقد اجتزت الاختبار بنجاح وتم فتح المستوى التالي!' : 'لم تصل لدرجة النجاح (17 من 20). راجع الأخطاء أدناه وحاول مرة أخرى.'}
+                        </p>
+
+                        <div class="space-y-3 text-right max-h-60 overflow-y-auto p-2">
+                            <h4 class="font-black text-white text-xs">مراجعة الأسئلة والأخطاء:</h4>
+                            ${examState.questions.map((quest, idx) => {
+                                let userAns = examState.userAnswers[idx];
+                                let isCorr = userAns === quest.correct;
+                                return `
+                                    <div class="p-3 rounded-xl bg-slate-900 border ${isCorr ? 'border-emerald-500/40 text-emerald-300' : 'border-rose-500/40 text-rose-300'} text-xs space-y-1">
+                                        <p class="font-black text-white">${idx + 1}. ${quest.question}</p>
+                                        <p>إجابتك: ${userAns !== undefined ? quest.options[userAns] : 'لم تقم بالإجابة'} ${isCorr ? '✅' : '❌'}</p>
+                                        ${!isCorr ? `<p class="text-emerald-400 font-bold">الإجابة الصحيحة: ${quest.options[quest.correct]}</p>` : ''}
+                                        <p class="text-slate-400 font-semibold">💡 الشرح: ${quest.explanation}</p>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+
+                        <div class="flex gap-3 pt-2">
+                            <button onclick="initExam(${level}); render();" class="flex-1 py-3.5 bg-slate-800 hover:bg-slate-700 text-white font-black rounded-xl border border-slate-700 text-xs">
+                                إعادة الامتحان بأسئلة جديدة 🔄
+                            </button>
+                            <button onclick="navigateTo('grammarMenu')" class="flex-1 py-3.5 btn-gradient text-white font-black rounded-xl text-xs">
+                                العودة لقائمة القواعد ⚙️
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="glass-card rounded-3xl p-6 md:p-8 max-w-xl mx-auto space-y-6 border border-slate-700 shadow-2xl">
+                    <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                        <span class="text-xs font-black text-indigo-400">امتحان المستوى ${level} (قواعد)</span>
+                        <span class="text-xs bg-slate-900 text-slate-200 px-3 py-1 rounded-xl font-bold border border-slate-800">السؤال ${examState.currentIndex + 1} من 20</span>
+                    </div>
+
+                    <div class="space-y-2">
+                        <h3 class="text-lg md:text-xl font-black text-white leading-relaxed">${q.question}</h3>
+                    </div>
+
+                    <div class="space-y-3">
+                        ${q.options.map((opt, idx) => `
+                            <button onclick="selectExamAnswer(${idx})" class="w-full p-4 rounded-xl text-right text-sm font-black border transition-all ${examState.userAnswers[examState.currentIndex] === idx ? 'bg-indigo-600 border-indigo-400 text-white shadow-lg' : 'bg-slate-900 border-slate-700 text-slate-200 hover:bg-slate-800'}">
+                                <span class="ml-2">${['أ', 'ب', 'ج', 'د'][idx]})</span> ${opt}
+                            </button>
+                        `).join('')}
+                    </div>
+
+                    <div class="flex justify-between items-center pt-4 border-t border-slate-800">
+                        <button ${examState.currentIndex === 0 ? 'disabled' : ''} onclick="examState.currentIndex--; render();" class="py-3 px-5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-black rounded-xl disabled:opacity-40">
+                            ⬅ السابق
+                        </button>
+                        ${examState.currentIndex < 19 ? `
+                            <button onclick="examState.currentIndex++; render();" class="py-3 px-6 btn-gradient text-white text-xs font-black rounded-xl">
+                                التالي ➡
+                            </button>
+                        ` : `
+                            <button onclick="submitExam()" class="py-3 px-6 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-black rounded-xl shadow-lg">
+                                تسليم الامتحان 🏁
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+        }
+
+        function initExam(level) {
+            examState = {
+                level: level,
+                questions: generateExamQuestions(level),
+                currentIndex: 0,
+                userAnswers: {},
+                submitted: false,
+                score: 0
+            };
+        }
+
+        function selectExamAnswer(optionIndex) {
+            examState.userAnswers[examState.currentIndex] = optionIndex;
+            render();
+        }
+
+        function submitExam() {
+            let score = 0;
+            examState.questions.forEach((q, idx) => {
+                if (examState.userAnswers[idx] === q.correct) {
+                    score++;
+                }
+            });
+            examState.score = score;
+            examState.submitted = true;
+            state.examScores[examState.level] = score;
+
+            if (score >= 17) {
+                state.points += 10;
+                state.stars += 5;
+                if (!state.completedLevels.grammar.includes(examState.level + 1) && examState.level < 4) {
+                    state.completedLevels.grammar.push(examState.level + 1);
+                }
+            }
+            saveState();
+            render();
+        }
+
+        function generateExamQuestions(level) {
+            let qs = [];
+            for (let i = 0; i < 20; i++) {
+                if (level === 1) {
+                    const pool = [
+                        { q: "The government _____ new projects every year.", ops: ["launch", "launches", "is launching", "launched"], corr: 1, exp: "مضارع بسيط مع فرد غائب (The government) يتطلب (launches)." },
+                        { q: "They _____ endangered species right now.", ops: ["protect", "protects", "are protecting", "protected"], corr: 2, exp: "وجود (right now) يدل على المضارع المستمر (are protecting)." },
+                        { q: "She doesn't _____ the local currency.", ops: ["like", "likes", "liked", "liking"], corr: 0, exp: "بعد doesn't يأتي الفعل في المصدر (like)." },
+                        { q: "_____ you study English grammar?", ops: ["Are", "Do", "Does", "Is"], corr: 1, exp: "السؤال في المضارع البسيط مع you يبدأ بـ Do." },
+                        { q: "Look! The biologist _____ marine life.", ops: ["study", "studies", "is studying", "studied"], corr: 2, exp: "ملاحظة Look! تدل على حدث يحدث الآن (is studying)." },
+                        { q: "Fresh water _____ vital for survival.", ops: ["is", "are", "be", "were"], corr: 0, exp: "كلمة fresh water تعامل معاملة المفرد غير المعدود وتأخذ is." },
+                        { q: "I _____ what you mean.", ops: ["am knowing", "know", "knows", "knowing"], corr: 1, exp: "فعل الحالة know لا يستخدم في المستمر." },
+                        { q: "What _____ the citizens doing now?", ops: ["are", "do", "does", "is"], corr: 0, exp: "الفاعل الجمع the citizens يأخذ are في المضارع المستمر." },
+                        { q: "He usually _____ up early.", ops: ["get", "gets", "is getting", "got"], corr: 1, exp: "عادة يومية مع مفرد غائب (gets)." },
+                        { q: "We _____ establishing a new hub this week.", ops: ["is", "are", "do", "does"], corr: 1, exp: "موقف مؤقت في الحاضر مع We يأخذ are establishing." }
+                    ];
+                    let base = pool[i % pool.length];
+                    qs.push({ question: base.q, options: base.ops, correct: base.corr, explanation: base.exp });
+                } else if (level === 2) {
+                    const pool = [
+                        { q: "The federation _____ the satellite last year.", ops: ["launch", "launched", "have launched", "launching"], corr: 1, exp: "last year يدل على الماضي البسيط (launched)." },
+                        { q: "She _____ her phone. She can't find it.", ops: ["lost", "has lost", "loses", "is losing"], corr: 1, exp: "حدث ماضٍ له أثر حالي يستوجب المضارع التام (has lost)." },
+                        { q: "I have lived in Riyadh _____ 2020.", ops: ["for", "since", "in", "ago"], corr: 1, exp: "2020 نقطة بداية محددة تأخذ since." },
+                        { q: "Have you _____ visited London?", ops: ["ever", "never", "yet", "already"], corr: 0, exp: "في أسئلة التجارب الحياتية نستخدم ever." },
+                        { q: "They established the enterprise two days _____.", ops: ["since", "for", "ago", "already"], corr: 2, exp: "ago تُستخدم مع وقت مضى في الماضي البسيط." },
+                        { q: "He hasn't finished the transmission _____.", ops: ["already", "yet", "just", "ever"], corr: 1, exp: "تأتي yet في نهاية الجمل المنفية مع المضارع التام." },
+                        { q: "We have worked here _____ five years.", ops: ["since", "for", "in", "at"], corr: 1, exp: "مدة زمنية إجمالية تأخذ for." },
+                        { q: "Did you _____ the natural disaster news?", ops: ["watch", "watched", "watching", "watches"], corr: 0, exp: "بعد did يأتي الفعل في المصدر (watch)." },
+                        { q: "I _____ seen that legendary movie.", ops: ["have", "has", "did", "was"], corr: 0, exp: "المضارع التام مع I يأخذ have." },
+                        { q: "The government _____ new enterprises in 2015.", ops: ["start", "started", "have started", "starting"], corr: 1, exp: "in 2015 يدل على الماضي البسيط (started)." }
+                    ];
+                    let base = pool[i % pool.length];
+                    qs.push({ question: base.q, options: base.ops, correct: base.corr, explanation: base.exp });
+                } else if (level === 3) {
+                    const pool = [
+                        { q: "I was studying when the biologist _____.", ops: ["call", "called", "is calling", "calls"], corr: 1, exp: "الحدث القاطع في الماضي البسيط يكون called." },
+                        { q: "While we _____, the traffic was heavy.", ops: ["travel", "traveled", "were traveling", "travels"], corr: 2, exp: "فعل مستمر أثناء حدث آخر يأخذ Past Progressive (were traveling)." },
+                        { q: "They _____ playing football at 5 p.m. yesterday.", ops: ["was", "were", "are", "did"], corr: 1, exp: "مع الجمع They في الماضي المستمر نستخدم were." },
+                        { q: "What _____ you doing when the disaster struck?", ops: ["was", "were", "did", "are"], corr: 1, exp: "السؤال في الماضي المستمر مع you يأخذ were." },
+                        { q: "While she was reading, he _____ TV.", ops: ["watch", "watched", "was watching", "watches"], corr: 2, exp: "فعلان مستمران في نفس الوقت (was watching)." },
+                        { q: "When the lights went out, we _____ dinner.", ops: ["have", "had", "were having", "are having"], corr: 2, exp: "حدث كان مستمراً عندما انقطعت الكهرباء." },
+                        { q: "He wasn't _____ when you arrived.", ops: ["sleep", "slept", "sleeping", "sleeps"], corr: 2, exp: "النفي في الماضي المستمر: wasn't + V-ing." },
+                        { q: "_____ you sleeping when I knocked?", ops: ["Was", "Were", "Did", "Are"], corr: 1, exp: "السؤال مع you يبدأ بـ Were." },
+                        { q: "They were traveling _____ it started to rain.", ops: ["while", "when", "during", "since"], corr: 1, exp: "when تستخدم قبل الحدث المفاجئ في الماضي البسيط." },
+                        { q: "I _____ walking when I saw Saud.", ops: ["was", "were", "did", "am"], corr: 0, exp: "مع I في الماضي المستمر نستخدم was." }
+                    ];
+                    let base = pool[i % pool.length];
+                    qs.push({ question: base.q, options: base.ops, correct: base.corr, explanation: base.exp });
+                } else {
+                    const pool = [
+                        { q: "I moved to Riyadh _____ 2020.", ops: ["in", "on", "at", "for"], corr: 0, exp: "السنوات تأخذ حرف الجر in." },
+                        { q: "_____ yesterday, I visited my friend.", ops: ["In", "On", "At", "No preposition needed"], corr: 3, exp: "التعبيرات مثل yesterday لا تحتاج حرف جر." },
+                        { q: "They completed the infrastructure two days _____.", ops: ["since", "ago", "for", "yet"], corr: 1, exp: "ago تُستخدم للتعبير عن وقت مضى." },
+                        { q: "He has worked here _____ five years.", ops: ["since", "for", "in", "ago"], corr: 1, exp: "مدد الزمن تأخذ for." },
+                        { q: "We launched the project _____ last week.", ops: ["in", "on", "at", "no preposition"], corr: 3, exp: "last week لا تسبق بحرف جر." },
+                        { q: "_____ that time, the economy was growing.", ops: ["At", "In", "On", "By"], corr: 0, exp: "التعبير الصحيح هو At that time." },
+                        { q: "She was studying all evening _____.", ops: ["yesterday", "tomorrow", "now", "always"], corr: 0, exp: "all evening yesterday تعبر عن استمرار طوال الأمس." },
+                        { q: "I saw the biologist _____ Monday.", ops: ["in", "on", "at", "for"], corr: 1, exp: "أيام الأسبوع تأخذ حرف الجر on." },
+                        { q: "They arrived _____ night.", ops: ["in", "on", "at", "for"], corr: 2, exp: "التعبير الصحيح هو at night." },
+                        { q: "From 2010 _____ 2020, he lived abroad.", ops: ["to", "until", "till", "all are correct"], corr: 3, exp: "جميع الحروف تؤدي نفس المعنى الزمني." }
+                    ];
+                    let base = pool[i % pool.length];
+                    qs.push({ question: base.q, options: base.ops, correct: base.corr, explanation: base.exp });
+                }
+            }
+            return qs;
+        }
+
+        function renderReviewScreen() {
+            return `
+                <div class="glass-card rounded-3xl p-6 md:p-8 max-w-xl mx-auto space-y-6 border border-emerald-500/40 text-center shadow-2xl">
+                    <div class="text-5xl">🎯</div>
+                    <h3 class="text-2xl font-black text-white">المراجعة الشاملة — Comprehensive Review</h3>
+                    <p class="text-slate-200 text-sm md:text-base font-semibold leading-relaxed">
+                        لقد أتممت استعراض كافة المفردات والقواعد لوحدة Big Changes. يمكنك إعادة التدريب على المفردات أو القواعد أو إجراء الاختبارات في أي وقت.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-3 pt-4">
+                        <button onclick="navigateTo('vocabMenu')" class="flex-1 py-3.5 btn-gradient text-white font-black rounded-xl text-xs">
+                            مراجعة المفردات 📚
+                        </button>
+                        <button onclick="navigateTo('grammarMenu')" class="flex-1 py-3.5 bg-indigo-600 hover:bg-indigo-500 text-white font-black rounded-xl text-xs">
+                            مراجعة القواعد ⚙️
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderProgressScreen() {
+            let totalWords = 0;
+            Object.values(vocabData).forEach(cat => totalWords += cat.items.length);
+            let learnedCount = state.learnedWords.length;
+            let percent = Math.round((learnedCount / totalWords) * 100);
+
+            return `
+                <div class="glass-card rounded-3xl p-6 md:p-8 max-w-xl mx-auto space-y-6 border border-amber-500/40 shadow-2xl">
+                    <div class="text-center">
+                        <div class="text-5xl mb-2">📊</div>
+                        <h3 class="text-2xl font-black text-white">تقدمي في المغامرة — My Progress</h3>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-slate-900 p-4.5 rounded-2xl border border-slate-800 text-center shadow-inner">
+                            <span class="text-3xl font-black text-amber-400">${state.stars}</span>
+                            <p class="text-xs text-slate-300 font-bold mt-1">النجوم المحققة ⭐</p>
+                        </div>
+                        <div class="bg-slate-900 p-4.5 rounded-2xl border border-slate-800 text-center shadow-inner">
+                            <span class="text-3xl font-black text-blue-400">${state.points}</span>
+                            <p class="text-xs text-slate-300 font-bold mt-1">إجمالي النقاط 🏆</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-2">
+                        <div class="flex justify-between text-xs font-black text-slate-200">
+                            <span>إتقان المفردات</span>
+                            <span>${learnedCount} / ${totalWords} (${percent}%)</span>
+                        </div>
+                        <div class="w-full bg-slate-900 rounded-full h-3.5 overflow-hidden border border-slate-800">
+                            <div class="bg-gradient-to-r from-blue-500 to-emerald-500 h-3.5 rounded-full" style="width: ${percent}%"></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-900 p-4.5 rounded-2xl border border-slate-800 space-y-2 shadow-inner">
+                        <h4 class="font-black text-white text-xs">حالة حفظ التقدم:</h4>
+                        <p class="text-xs text-slate-300 font-semibold">✅ يتم حفظ نقاطك، نجومك، والكلمات التي أتقنتها تلقائياً في جهازك (LocalStorage) لضمان استمرار تقدمك بسلاسة.</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderAchievementsScreen() {
+            const badges = [
+                { title: "مستكشف الكلمات", desc: "أتقن 10 كلمات جديدة", unlocked: state.learnedWords.length >= 10, icon: "🔍" },
+                { title: "خبير القواعد الأول", desc: "اجتاز امتحان المستوى الأول بنجاح", unlocked: (state.examScores[1] || 0) >= 17, icon: "⚙️" },
+                { title: "حارس الزمن", desc: "أتم جميع مستويات القواعد والامتحانات", unlocked: (state.examScores[4] || 0) >= 17, icon: "⏳" },
+                { title: "بطل المغامرة", desc: "اجمع أكثر من 30 نقطة تفاعلية", unlocked: state.points >= 30, icon: "🏆" }
+            ];
+
+            return `
+                <div class="glass-card rounded-3xl p-6 md:p-8 max-w-xl mx-auto space-y-6 border border-purple-500/40 shadow-2xl">
+                    <div class="text-center">
+                        <div class="text-5xl mb-2">🏆</div>
+                        <h3 class="text-2xl font-black text-white">الإنجازات والأوسمة — Achievements</h3>
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-3.5">
+                        ${badges.map(b => `
+                            <div class="p-4 rounded-2xl border flex items-center gap-4 ${b.unlocked ? 'bg-purple-500/15 border-purple-500/50 text-white' : 'bg-slate-900 border-slate-800 text-slate-400 opacity-60'} shadow">
+                                <div class="text-3xl">${b.icon}</div>
+                                <div>
+                                    <h4 class="font-black text-sm ${b.unlocked ? 'text-purple-300' : 'text-slate-300'}">${b.title}</h4>
+                                    <p class="text-xs text-slate-300 font-semibold">${b.desc}</p>
+                                </div>
+                                <div class="mr-auto">
+                                    <span class="text-xs font-black px-3 py-1 rounded-xl ${b.unlocked ? 'bg-purple-500/20 text-purple-300 border border-purple-500/40' : 'bg-slate-800 text-slate-400'}">
+                                        ${b.unlocked ? 'مُحرز ✅' : 'مقفل 🔒'}
+                                    </span>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        window.onload = function() {
+            render();
+        };
+    </script>
+</body>
+</html>
